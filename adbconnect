@@ -1,0 +1,10 @@
+#!/bin/bash
+ADB_NET=${ADB_NET:-127.0.0}
+ADB_PORT=${ADB_PORT:-5555}
+
+declare -a ips
+mapfile -t ips < <(nmap -n -sP ${ADB_NET}.0/24 -oG - 2>/dev/null | tail -n +2 | grep "$ADB_NET" | cut -d " " -f2)
+
+for ip in "${ips[@]}"; do
+    adb connect ${ip}:${ADB_PORT}
+done
